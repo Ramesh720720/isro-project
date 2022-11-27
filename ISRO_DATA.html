@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en">
+
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>fetch api</title>
+  </head>
+  <style>
+  #btn_box {
+    border: 1px solid gray;
+    border-radius: 5px;
+    padding: 5px;
+    margin-bottom: 10px;
+  }
+
+  #btn {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+
+  .btn_fun {
+    padding: 4px;
+    font-size: larger;
+    background-color: rgba(19, 19, 231, 0.889);
+    border-radius: 5px;
+    border: 1px solid black;
+    color: white;
+  }
+
+  .btn_fun:hover {
+    background-color: blue;
+  }
+
+  /* *{
+      border: 1px solid black;
+      padding: 5px;
+    } */
+  td {
+    text-align: center;
+  }
+
+  td,
+  th {
+    border: 1px solid gray;
+    padding: 2px;
+  }
+
+  #data {
+    display: flex;
+    justify-content: center;
+    margin: 5px;
+  }
+  @media screen and (max-width:300px) {
+    #data{
+      width: max-content;
+    }
+  }
+  .error_para {
+    font-size: larger;
+  }
+
+  #error {
+    border: 1px solid black;
+    width: max-content;
+    padding: 100px;
+    border-radius: 5px;
+    background-color: antiquewhite;
+    display: none;
+    /* display: flex; */
+    position: fixed;
+    flex-direction: column;
+  }
+
+  main {
+    opacity: 1;
+  }
+
+  #ok {
+    float: right;
+    padding: 5px;
+    font-size: larger;
+    border: 1px solid black;
+    border-radius: 10px;
+  }
+
+  #box {
+    display: flex;
+    justify-content: center;
+  }
+</style>
+  <body>
+    <main>
+      <h1>
+        <center>ISRO (Indian space Station)</center>
+      </h1>
+      <div id="btn_box">
+        <div id="btn">
+          <button class="btn_fun" onclick="spacecrafts()">Spacecraft</button>
+          <button class="btn_fun" onclick="launchers()">launchers</button>
+          <button class="btn_fun" onclick="centers()">Centers</button>
+          <button class="btn_fun" onclick="cus_sate()">customer Satelites</button>
+        </div>
+      </div>
+      <div id="data">
+        <table id="table">
+          <thead id="table_head">
+          </thead>
+          <tbody id="table_body">
+          </tbody>
+        </table>
+      </div>
+    </main>
+    <div id="box">
+      <div id="error">
+        <p class="error_para"><b>Error ! </b><span id="error_main_p">Please
+            connect to connection</span></p>
+        <button type="button" id="ok">Ok</button>
+      </div>
+    </div>
+  </body>
+  <script>
+  document.getElementById('ok').addEventListener('click', function () {
+    error.style.display = 'none';
+    document.querySelector('main').style.opacity = 1;
+  });
+function data(request) {
+    let curl = fetch(request);
+    let list = curl
+      .then((value1) => {
+        return value1.json();
+      })
+      .then((value2) => {
+        return value2;
+      }).catch((Error) => {
+        if (!navigator.onLine) {
+          onError('Please connect to internet');
+          new Error(Error);
+        } else {
+          onError(Error);
+          new Error(Error);
+        }
+      });
+    return list;
+  }
+  function spacecrafts() {
+    let list = data("https://isro.vercel.app/api/spacecrafts");
+    let table_head = document.getElementById('table_head');
+    let table_body = document.getElementById('table_body');
+    table_head.innerHTML = '';
+    table_body.innerHTML = '';
+    table_head.innerHTML = ("<tr> <th>ID</th><th>NAME</th></tr> ");
+    list.then((value) => {
+      for (let index = 0; index < value.spacecrafts.length; index++) {
+        const element = value.spacecrafts[index];
+        let id = element.id;
+        let name = element.name;
+        table_body.innerHTML += "<tr><td>" + id + "</td><td>" + name + "</td></tr>"
+      }
+    });
+
+  }
+  function centers() {
+    let list = data("https://isro.vercel.app/api/centres");
+    list.then((value) => {
+      let table_head = document.getElementById('table_head');
+      let table_body = document.getElementById('table_body');
+      table_head.innerHTML = '';
+      table_body.innerHTML = '';
+      table_head.innerHTML = ("<tr> <th>ID</th><th>Name</th><th>City</th><th>State</th></tr> ");
+      for (let index = 0; index < value.centres.length; index++) {
+        const element = value.centres[index];
+        table_body.innerHTML += "<tr><td>" + element.id + "</td><td>" + element.name + "</td><td>" + element.Place + "</td><td>" + element.State + "</td></tr>"
+      }
+    });
+  }
+  function launchers() {
+    let list = data("https://isro.vercel.app/api/launchers");
+    list.then((value) => {
+      let table_head = document.getElementById('table_head');
+      let table_body = document.getElementById('table_body');
+      table_head.innerHTML = '';
+      table_body.innerHTML = '';
+      table_head.innerHTML = ("<tr> <th>Sr.No.</th><th>NAME</th></tr> ");
+      for (let index = 0; index < value.launchers.length; index++) {
+        const element = value.launchers[index];
+        let name = element.id;
+        table_body.innerHTML += "<tr><td>" + index + "</td><td>" + name + "</td></tr>"
+      }
+    });
+  }
+  function cus_sate() {
+    let list = data("https://isro.vercel.app/api/customer_satellites");
+    list.then((value) => {
+      let table_head = document.getElementById('table_head');
+      let table_body = document.getElementById('table_body');
+      table_head.innerHTML = '';
+      table_body.innerHTML = '';
+      table_head.innerHTML = ("<tr> <th>ID</th><th>Date</th><th>Country</th><th>Launcher</th><th>Weight (Kg) </th></tr> ");
+      let list_obj = value.customer_satellites;
+      for (let index = 0; index < value.customer_satellites.length; index++) {
+        const element = value.customer_satellites[index];
+        let id = element.id;
+        let country = element.country;
+        let launch_date = element.launch_date;
+        let mass = element.mass;
+        let launcher = element.launcher;
+        table_body.innerHTML += "<tr><td>" + id + "</td><td>" + launch_date + "</td><td>" + country + "</td><td>" + launcher + "</td><td>" + mass + "</td></tr>"
+      }
+    });
+  }
+  function onError(error_p) {
+    let main = document.querySelector('main');
+    let error = document.getElementById('error');
+    let p = document.getElementById('error_main_p');
+    p.innerText = error_p;
+    error.style.display = 'flex';
+    main.style.opacity = 0.2;
+  }
+</script>
+</html>
